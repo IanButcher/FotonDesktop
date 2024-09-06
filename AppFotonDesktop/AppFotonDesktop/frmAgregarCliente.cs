@@ -50,9 +50,13 @@ namespace AppFotonDesktop
                               where c.ID_cliente == this.ClientesID
                               select c;
                 var juanamanso = consult.FirstOrDefault();
-                if (juanamanso == null)
+                if (juanamanso != null)
                 {
                     this.textBox1.Text = juanamanso.Nombre;
+                    this.textBox2.Text = juanamanso.DNI.ToString();
+                    this.textBox3.Text = juanamanso.Domicilio;
+                    this.textBox5.Text = juanamanso.Contacto.ToString();
+                    this.textBox4.Text = juanamanso.Email;
                 }
             }
         }
@@ -67,7 +71,44 @@ namespace AppFotonDesktop
                 var juanamanso = consult.FirstOrDefault();
                 if (juanamanso == null)
                 {
-                    NuevoCliente();
+                    juanamanso.Nombre = textBox1.Text;
+                    // Verifica si el DNI es un número válido
+                    if (int.TryParse(this.textBox2.Text, out int dni))
+                    {
+                        juanamanso.DNI = dni;
+                    }
+                    else
+                    {
+                        MessageBox.Show("Ingrese un DNI válido.");
+                        return;
+                    }
+
+                    juanamanso.Domicilio = this.textBox3.Text;
+
+                    // Verifica si el contacto es válido
+                    if (ComprobarContacto())
+                    {
+                        juanamanso.Contacto = Convert.ToInt64(textBox5.Text);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Ingrese un número de contacto válido.");
+                        return;
+                    }
+
+                    // Verifica si el email es válido
+                    if (ComprobarEmail())
+                    {
+                        juanamanso.Email = this.textBox4.Text.ToLower();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Ingrese un email válido.");
+                        return;
+                    }
+                    BD.SaveChanges();
+                    MessageBox.Show("Cliente editado exitosamente.");
+
                 }
             }
         }
